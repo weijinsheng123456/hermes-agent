@@ -497,6 +497,31 @@ def cronjob(
 
         if normalized in {"run", "run_now", "trigger"}:
             updated = trigger_job(job_id)
+            if not updated:
+                return json.dumps({"success": False, "error": "Job not found"}, indent=2)
+            # Execute immediately instead of waiting for next scheduler tick.
+            try:
+                job = resolve_job_ref(job_id)
+                if job and job.get("id"):
+                    from cron.jobs import advance_next_run
+                    from cron.scheduler import run_job as _do_run
+                    advance_next_run(job["id"])
+                    _ok, _doc, _resp, _err = _do_run(job)
+                    if _ok:
+                        return json.dumps({
+                            "success": True, "run_now": True,
+                            "job": _format_job(updated),
+                            "result": "ok",
+                            "output_preview": (_resp or _doc or "")[:1000],
+                        }, indent=2, ensure_ascii=False)
+                    return json.dumps({
+                        "success": True, "run_now": True,
+                        "job": _format_job(updated),
+                        "result": "failed", "error": _err or _resp[:500],
+                        "output_preview": (_doc or "")[:2000],
+                    }, indent=2, ensure_ascii=False)
+            except Exception as exc:
+                logger.warning("run_job immediate exec failed, falling back to scheduler tick: %s", exc)
             return json.dumps({"success": True, "job": _format_job(updated)}, indent=2)
 
         if normalized == "update":
