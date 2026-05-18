@@ -46,7 +46,11 @@ class MessageDeduplicator:
         self._ttl = ttl_seconds
 
     def is_duplicate(self, msg_id: str) -> bool:
-        """Return True if *msg_id* was already seen within the TTL window."""
+        """Return True if *msg_id* was already seen within the TTL window.
+
+        Side-effect: records *msg_id* as seen. For a check-only variant
+        (no persistence), use :meth:`check_only` instead.
+        """
         if not msg_id:
             return False
         now = time.time()
@@ -69,6 +73,27 @@ class MessageDeduplicator:
                 )[-self._max_size:]
                 self._seen = dict(newest)
         return False
+
+    def check_only(self, msg_id: str) -> bool:
+        """Return True if *msg_id* was already seen, without recording it.
+
+        Use this when the caller wants to defer the \"seen\" mark until
+        the message has been successfully processed.
+        """
+        if not msg_id:
+            return False
+        now = time.time()
+        if msg_id in self._seen:
+            if now - self._seen[msg_id] < self._ttl:
+                return True
+            del self._seen[msg_id]
+        return False
+
+    def mark_seen(self, msg_id: str) -> None:
+        """Record *msg_id* as seen."""
+        if not msg_id:
+            return
+        self._seen[msg_id] = time.time()
 
     def clear(self):
         """Clear all tracked messages."""
