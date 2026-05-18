@@ -2407,7 +2407,7 @@ class APIServerAdapter(BasePlatformAdapter):
     # Cron jobs API
     # ------------------------------------------------------------------
 
-    _JOB_ID_RE = __import__("re").compile(r"[a-f0-9]{12}")
+    _JOB_ID_RE = re.compile(r"[a-f0-9]{12}")
     # Allowed fields for update — prevents clients injecting arbitrary keys
     _UPDATE_ALLOWED_FIELDS = {"name", "schedule", "prompt", "deliver", "skills", "skill", "repeat", "enabled"}
     _MAX_NAME_LENGTH = 200
