@@ -77,7 +77,7 @@ class MessageDeduplicator:
     def check_only(self, msg_id: str) -> bool:
         """Return True if *msg_id* was already seen, without recording it.
 
-        Use this when the caller wants to defer the \"seen\" mark until
+        Use this when the caller wants to defer the "seen" mark until
         the message has been successfully processed.
         """
         if not msg_id:
@@ -87,23 +87,32 @@ class MessageDeduplicator:
             if now - self._seen[msg_id] < self._ttl:
                 return True
             del self._seen[msg_id]
+        # Lightweight TTL prune: when dict grows large, sweep expired
+        # entries so check_only alone can't leak memory indefinitely.
+        if len(self._seen) > self._max_size * 3:
+            cutoff = now - self._ttl
+            self._seen = {k: v for k, v in self._seen.items() if v > cutoff}
         return False
 
     def mark_seen(self, msg_id: str) -> None:
         """Record *msg_id* as seen.
 
-        Note: check_only + mark_seen is NOT coroutine-safe when used across
-        concurrent tasks. For concurrent use, prefer :meth:`is_duplicate`
-        which atomically checks and marks in a single call.
+        Note: This method and check_only are NOT coroutine-safe when used
+        across concurrent tasks — the pruning path replaces self._seen with
+        a new dict, and concurrent calls can lose entries. For concurrent
+        use, prefer :meth:`is_duplicate` which atomically checks and marks
+        in a single call.
         """
         if not msg_id:
             return
         self._seen[msg_id] = time.time()
-        # Prune stale entries to keep dict bounded (mirrors is_duplicate
-        # which prunes when len > max_size * 2).
+        # Prune stale entries when the dict grows beyond the relaxed threshold
+        # (2x max_size). The tighter threshold in is_duplicate (1x max_size)
+        # handles the common path; mark_seen's higher threshold reduces
+        # pruning frequency for the check_only + mark_seen usage pattern.
         if len(self._seen) > self._max_size * 2:
             cutoff = time.time() - self._ttl
-            self._seen = {k: v for k, v in self._seen.items() if v >= cutoff}
+            self._seen = {k: v for k, v in self._seen.items() if v > cutoff}
             if len(self._seen) > self._max_size:
                 newest = sorted(self._seen.items(), key=lambda x: x[1], reverse=True)[:self._max_size]
                 self._seen = dict(newest)
