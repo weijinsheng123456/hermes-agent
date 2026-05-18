@@ -90,10 +90,23 @@ class MessageDeduplicator:
         return False
 
     def mark_seen(self, msg_id: str) -> None:
-        """Record *msg_id* as seen."""
+        """Record *msg_id* as seen.
+
+        Note: check_only + mark_seen is NOT coroutine-safe when used across
+        concurrent tasks. For concurrent use, prefer :meth:`is_duplicate`
+        which atomically checks and marks in a single call.
+        """
         if not msg_id:
             return
         self._seen[msg_id] = time.time()
+        # Prune stale entries to keep dict bounded (mirrors is_duplicate
+        # which prunes when len > max_size * 2).
+        if len(self._seen) > self._max_size * 2:
+            cutoff = time.time() - self._ttl
+            self._seen = {k: v for k, v in self._seen.items() if v >= cutoff}
+            if len(self._seen) > self._max_size:
+                newest = sorted(self._seen.items(), key=lambda x: x[1], reverse=True)[:self._max_size]
+                self._seen = dict(newest)
 
     def clear(self):
         """Clear all tracked messages."""
