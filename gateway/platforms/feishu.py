@@ -1320,8 +1320,12 @@ def _run_official_feishu_ws_client(ws_client: Any, adapter: Any) -> None:
     _apply_runtime_ws_overrides()
     try:
         ws_client.start()
-    except Exception:
-        pass
+        # Signal that WS started successfully
+        adapter._ws_started_event.set()
+    except Exception as exc:
+        logger.error("[Feishu] Websocket client crashed during start: %s", exc, exc_info=True)
+        adapter._ws_started_failed = True
+        adapter._ws_started_event.set()  # Unblock the waiter
     finally:
         ws_client_module.websockets.connect = original_connect
         if original_configure is not None:
@@ -1426,6 +1430,7 @@ class FeishuAdapter(BasePlatformAdapter):
         self._ws_client: Optional[Any] = None
         self._ws_future: Optional[asyncio.Future] = None
         self._ws_thread_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._ws_started_event = threading.Event()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._webhook_runner: Optional[Any] = None
         self._webhook_site: Optional[Any] = None
@@ -2318,7 +2323,7 @@ class FeishuAdapter(BasePlatformAdapter):
         adapter shuts down. A single drainer handles the entire queue;
         concurrent ``_on_message_event`` calls just append.
         """
-        poll_interval = 0.25
+        poll_interval = 0.5
         max_wait_seconds = 120.0  # safety cap: drop queue after 2 minutes
         waited = 0.0
         try:
@@ -2502,7 +2507,19 @@ class FeishuAdapter(BasePlatformAdapter):
         """
         loop = self._loop
         if not self._loop_accepts_callbacks(loop):
-            logger.warning("[Feishu] Dropping card action before adapter loop is ready")
+            logger.warning("[Feishu] Queuing card action event for replay (loop not ready)")
+            start_drainer = self._enqueue_pending_inbound_event(data)
+            if start_drainer:
+                if hasattr(self, "_drainer_thread") and self._drainer_thread and self._drainer_thread.is_alive():
+                    logger.warning("[Feishu] Drainer thread already running, skipping duplicate start (card action)")
+                    return
+                t = threading.Thread(
+                    target=self._drain_pending_inbound_events,
+                    name="feishu-pending-inbound-drainer",
+                    daemon=True,
+                )
+                t.start()
+                self._drainer_thread = t
             return P2CardActionTriggerResponse() if P2CardActionTriggerResponse else None
 
         event = getattr(data, "event", None)
@@ -3935,6 +3952,32 @@ class FeishuAdapter(BasePlatformAdapter):
         except Exception:
             logger.exception("[Feishu] Background inbound processing failed")
 
+    @staticmethod
+    def _extract_message_id_from_event(data: Any) -> Optional[str]:
+        """Extract message_id from a Feishu event data object.
+
+        Used by ``_on_message_event()`` to obtain the message_id before
+        dispatching to the background processing callback.
+        """
+        try:
+            event = getattr(data, "event", None)
+            message = getattr(event, "message", None)
+            return str(getattr(message, "message_id", "")).strip() or None
+        except Exception:
+            return None
+
+    def _on_message_processed(self, fut: asyncio.Future, message_id: str) -> None:
+        """Done callback: confirm dedup on success, log failure otherwise."""
+        try:
+            fut.result()
+            # Processing succeeded — make dedup durable
+            self._confirm_message_seen(message_id)
+        except Exception:
+            logger.exception(
+                "[Feishu] Background inbound processing failed for message %s",
+                message_id,
+            )
+
     # =========================================================================
     # Inbound admission
     # =========================================================================
@@ -4202,20 +4245,39 @@ class FeishuAdapter(BasePlatformAdapter):
             logger.warning("[Feishu] Failed to persist dedup state to %s", self._dedup_state_path, exc_info=True)
 
     def _is_duplicate(self, message_id: str) -> bool:
+        """Check if message_id was already seen (in-memory only).
+
+        Returns True if message_id is in the seen set and within TTL.
+        Does NOT persist to disk — call ``_confirm_message_seen()`` after
+        successful processing to make the dedup durable.
+        """
         now = time.time()
         ttl = _FEISHU_DEDUP_TTL_SECONDS
         with self._dedup_lock:
             seen_at = self._seen_message_ids.get(message_id)
             if seen_at is not None and (ttl <= 0 or now - seen_at < ttl):
                 return True
-            # Record with current wall-clock timestamp so TTL works across restarts.
+            # Record in-memory only — prevents duplicate concurrent processing
+            # without making the dedup durable before processing completes.
             self._seen_message_ids[message_id] = now
             self._seen_message_order.append(message_id)
+            while len(self._seen_message_order) > self._dedup_cache_size * 2:
+                stale = self._seen_message_order.pop(0)
+                self._seen_message_ids.pop(stale, None)
+            return False
+
+    def _confirm_message_seen(self, message_id: str) -> None:
+        """Persist message_id dedup to disk after successful processing.
+
+        Separated from ``_is_duplicate()`` so that Feishu can retry delivery
+        if processing fails before this point.
+        """
+        with self._dedup_lock:
+            # Trim in-memory cache to configured size before persisting
             while len(self._seen_message_order) > self._dedup_cache_size:
                 stale = self._seen_message_order.pop(0)
                 self._seen_message_ids.pop(stale, None)
             self._persist_seen_message_ids()
-            return False
 
     # =========================================================================
     # Outbound payload construction and send pipeline
@@ -4428,12 +4490,45 @@ class FeishuAdapter(BasePlatformAdapter):
             event_handler=self._event_handler,
             domain=domain,
         )
+        self._ws_started_failed = False
+        self._ws_started_event.clear()
         self._ws_future = loop.run_in_executor(
             None,
             _run_official_feishu_ws_client,
             self._ws_client,
             self,
         )
+        self._ws_future.add_done_callback(self._on_ws_future_done)
+        # Wait for WS to actually start (or fail) with a timeout
+        started = self._ws_started_event.wait(timeout=30)
+        if started and getattr(self, "_ws_started_failed", False):
+            logger.warning("[Feishu] WebSocket started but reported failure, will retry")
+            started = False
+            self._ws_started_failed = False
+        retries = 0
+        while not started and retries < 3:
+            logger.warning("[Feishu] WebSocket not started within 30s, retrying (%d/3)...", retries + 1)
+            time.sleep(5)
+            started = self._ws_started_event.wait(timeout=15)
+            if started and getattr(self, "_ws_started_failed", False):
+                logger.warning("[Feishu] WebSocket started but reported failure, will retry")
+                started = False
+                self._ws_started_failed = False
+            retries += 1
+        if not started:
+            raise RuntimeError("Feishu websocket did not start after 3 retries")
+
+    def _on_ws_future_done(self, fut: asyncio.Future) -> None:
+        """Callback when the WebSocket thread exits."""
+        if not getattr(self, "_running", False):
+            return
+        try:
+            exc = fut.exception()
+        except asyncio.CancelledError:
+            return  # Normal shutdown
+        msg = f"Feishu websocket stopped unexpectedly: {exc or 'completed'}"
+        logger.error("[Feishu] %s", msg)
+        self._set_fatal_error("feishu_ws_stopped", msg, retryable=True)
 
     async def _connect_webhook(self) -> None:
         if not FEISHU_WEBHOOK_AVAILABLE:

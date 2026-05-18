@@ -1,0 +1,31 @@
+# config.yaml 的变更内容（用于 patches）
+
+# 1. 更新 custom_providers: 添加 flash provider
+custom_providers:
+  - api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1
+    model: deepseek-v4-flash
+    name: deepseek-flash
+    provider_key: deepseek-flash
+    transport: openai_chat
+  - api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1
+    model: deepseek-v4-pro
+    name: deepseek-pro
+    provider_key: deepseek-pro
+    transport: openai_chat
+
+# 2. model 配置变更
+model:
+  default: deepseek-v4-flash
+  provider: deepseek
+  routing: deepseek-v4-pro
+
+# 3. delegation 用 pro 模型处理复杂子任务
+delegation:
+  model: deepseek-v4-pro
+  provider: deepseek
+
+# 4. fallback_providers - pro 失败时降级到 flash
+fallback_providers:
+  - deepseek

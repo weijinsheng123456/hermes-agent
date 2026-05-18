@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}系统概览 - Hermes{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0">
+    <h1 class="text-3xl font-bold text-white mb-6">系统概览</h1>
+    
+    <!-- 状态卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="text-sm font-medium text-gray-400">Gateway 状态</div>
+            <div class="mt-2 text-2xl font-bold {% if status.gateway_running %}text-green-400{% else %}text-red-400{% endif %}">
+                {% if status.gateway_running %}运行中{% else %}已停止{% endif %}
+            </div>
+            {% if status.gateway_pid %}
+            <div class="text-xs text-gray-500 mt-1">PID: {{ status.gateway_pid }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="text-sm font-medium text-gray-400">定时任务</div>
+            <div class="mt-2 text-2xl font-bold text-blue-400">{{ status.cron_jobs }}</div>
+            <div class="text-xs text-gray-500 mt-1">个任务</div>
+        </div>
+        
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="text-sm font-medium text-gray-400">内存使用</div>
+            <div class="mt-2 text-2xl font-bold text-purple-400">{{ status.memory_usage_mb }}</div>
+            <div class="text-xs text-gray-500 mt-1">MB</div>
+        </div>
+        
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div class="text-sm font-medium text-gray-400">CPU 使用率</div>
+            <div class="mt-2 text-2xl font-bold text-orange-400">{{ status.cpu_usage_percent }}%</div>
+            <div class="text-xs text-gray-500 mt-1">实时</div>
+        </div>
+    </div>
+    
+    <!-- 快捷操作 -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+        <h2 class="text-xl font-semibold mb-4">快捷操作</h2>
+        <div class="flex flex-wrap gap-3">
+            <button hx-post="/api/gateway/start" hx-swap="none" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                启动 Gateway
+            </button>
+            <button hx-post="/api/gateway/stop" hx-swap="none" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                停止 Gateway
+            </button>
+            <button hx-post="/api/gateway/restart" hx-swap="none" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                重启 Gateway
+            </button>
+            <button hx-get="/api/status" hx-target="#status-display" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                刷新状态
+            </button>
+        </div>
+    </div>
+    
+    <!-- 最近任务 -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold mb-4">最近任务</h2>
+        <div class="text-gray-400 text-sm">暂无任务记录</div>
+    </div>
+</div>
+{% endblock %}

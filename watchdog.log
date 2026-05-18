@@ -1,0 +1,1004 @@
+2026-04-18 16:48:50: Running health check...
+2026-04-18 16:48:51: API connection issue! (HTTP 404)
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+ModuleNotFoundError: No module named 'send_message'
+2026-04-18 16:48:51: API 告警已推送，标记文件已更新
+2026-04-18 16:48:51: Health check completed.
+2026-04-18 16:52:10: Running health check...
+2026-04-18 16:52:10: API connection issue! (HTTP 404)
+2026-04-18 16:52:10: API 告警在收敛期内，跳过推送（距上次告警 199秒）
+2026-04-18 16:52:10: Health check completed.
+2026-04-20 05:00:01: Running health check...
+2026-04-20 05:00:01: Gateway is down! Attempting restart...
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 05:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 05:00:03: API 告警已推送，标记文件已更新
+2026-04-20 05:00:03: Health check completed.
+/home/xiaobai/hermes-agent/.venv/lib/python3.12/site-packages/lark_oapi/ws/pb/google/__init__.py:2: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__('pkg_resources').declare_namespace(__name__)
+┌─────────────────────────────────────────────────────────┐
+│           ⚕ Hermes Gateway Starting...                 │
+├─────────────────────────────────────────────────────────┤
+│  Messaging platforms + cron scheduler                    │
+│  Press Ctrl+C to stop                                   │
+└─────────────────────────────────────────────────────────┘
+
+[Lark] [2026-04-20 05:00:11,491] [INFO] connected to wss://msg-frontier.feishu.cn/ws/v2?fpid=493&aid=552564&device_id=7630578062510640311&access_key=702e13c8a40d4b0f8fceda0434f5ed17&service_id=33554678&ticket=97887110-e74f-48e1-8272-9ba386010850 [conn_id=7630578062510640311]
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '66b384f9-a26a-9ae6-8f6d-d8e22eaa3e3c'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '29a5f7ec-adf1-9aa9-9c64-e0081d8e4918'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'd9f97870-d4f1-9892-bccc-8132e05b1467'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '2b906374-eb30-9da5-8726-d6ffc3a5f20f'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'f8f9945e-c99a-9da9-ae88-f5f5391c6421'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '20ec73e9-97d8-9c61-b617-e5c42ce3bb72'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'a0e3a155-bb57-9e33-9b41-f5068c46b5eb'}
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.00s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_050011_20260420_050014_589741.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.69s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_050014_20260420_050015_793429.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.71s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_050015_20260420_050017_081981.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.66s  Context: 2 msgs, ~5,678 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_7ebe699dee98_20260420_050017_20260420_050018_414651.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.83s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_053018_20260420_053020_471147.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.69s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_053020_20260420_053021_729925.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'eec863e1-23c1-9fc3-a682-5acbed120c4c'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'dd36cb90-0d51-92f4-9f89-baedd79ff5b9'}
+2026-04-20 06:00:01: Running health check...
+2026-04-20 06:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 06:00:08: API 告警已推送，标记文件已更新
+2026-04-20 06:00:08: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '9434dcfc-aaf4-9de4-bb6a-6b5a8dd8ed78'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '1aea9e24-c890-9c91-872b-0a4c651cd6cb'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '6bb01980-4608-9229-b597-c3df3f797288'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'b9fd8de3-158f-9086-87d0-c1c06612f7c0'}
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.95s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_053521_20260420_053523_222952.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.75s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_053823_20260420_053824_509758.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.84s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_060024_20260420_060028_127381.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.83s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_060028_20260420_060029_449966.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.09s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_060029_20260420_060031_083206.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.06s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_063031_20260420_063032_825307.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.77s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'a80eb526-ecdc-9546-9ae2-d017686fc0d2'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '0fc63c3d-0e88-966e-804a-0c03dcfc3b4f'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'a73efa69-5adf-9bf2-b8bc-062707780eab'}
+2026-04-20 07:00:01: Running health check...
+2026-04-20 07:00:03: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 07:00:04: API 告警已推送，标记文件已更新
+2026-04-20 07:00:04: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '0ae6523e-59c4-9a89-955b-1a7002f4f096'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'ce05830d-0933-9b98-a62d-4013a38e72e0'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '1b357722-4743-9abe-9990-9d0a7a258f7c'}
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_063032_20260420_063034_164727.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.76s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_063534_20260420_063535_508251.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.03s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_063835_20260420_063837_122248.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.79s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_070037_20260420_070039_747762.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.72s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_070039_20260420_070045_666198.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.70s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_070045_20260420_070046_885763.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.72s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_073047_20260420_073048_266873.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'b623ca79-37fc-982b-97fe-14ff5fa297fa'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'add21c84-8016-9e12-9243-8013d5c3273c'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '87aa12ab-b298-9a36-bb1b-3e28d6ee355b'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '901c2818-594d-938b-ba23-08774b01a58b'}
+2026-04-20 08:00:01: Running health check...
+2026-04-20 08:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 08:00:04: API 告警已推送，标记文件已更新
+2026-04-20 08:00:04: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'dde4eed6-e028-92da-ae75-f84b4a05a4b1'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '1121ec57-9026-9e41-980d-1eeb87cd46e8'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '8f5279f6-8619-9382-95e7-1b81aa8f8d4f'}
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.89s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_073048_20260420_073049_723448.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.86s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_073549_20260420_073551_152673.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.87s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_073851_20260420_073852_614376.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.70s  Context: 2 msgs, ~5,616 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_eaf79c96e2e6_20260420_080052_20260420_080056_289164.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.74s  Context: 2 msgs, ~5,784 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_b9cae6de8684_20260420_080056_20260420_080057_581598.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.80s  Context: 2 msgs, ~5,656 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_3e29a6abee29_20260420_080057_20260420_080058_861125.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'f681fc4b-56b5-9171-a866-4920cbcf5f3c'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '4e6a77ef-a775-95bd-b366-70c98bd74415'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '1cfe72c4-b455-99dd-99f5-c6121e1c2878'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '7ad60067-ffad-99e9-89b5-c758e7241a67'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '98648bc8-f75c-9444-b8f4-6ab862270869'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'cc674ca8-94a6-9bc8-9888-219cfe5a45d4'}
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.72s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_080058_20260420_080100_179216.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.67s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_080100_20260420_080101_339126.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.72s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_080101_20260420_080102_598961.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.68s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_083002_20260420_083004_000931.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.76s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_083004_20260420_083005_301245.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.67s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_083505_20260420_083506_514834.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.69s  Context: 2 msgs, ~5,684 tokens
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '8ee47f8b-7df7-92cc-a787-0b81c58d082a'}
+2026-04-20 09:00:01: Running health check...
+2026-04-20 09:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 09:00:03: API 告警已推送，标记文件已更新
+2026-04-20 09:00:03: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'cf8d53b3-5c11-942d-9937-e23c871ff329'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'a63cbaed-b24b-9a74-883d-8846274ad1a9'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '97d78ea3-ca5a-901c-a95a-c17a556c3f07'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'fa604599-c918-94ec-b187-f7ca4945a64a'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '7a2426ee-4875-9670-9f29-f11dfc9875d4'}
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_083906_20260420_083907_784089.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.99s  Context: 2 msgs, ~5,647 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_681605d913e4_20260420_090007_20260420_090009_423704.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.69s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_090009_20260420_090010_655048.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.67s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_090010_20260420_090011_850409.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.80s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_090011_20260420_090013_151215.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.76s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_093013_20260420_093016_947626.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.93s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_093017_20260420_093018_378184.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'ae455e3c-b80c-91db-a701-bc851704ed35'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '0b2964f4-4dac-958c-845d-8cf26f91f06c'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'c89d9565-c739-9062-9162-e40e62a31549'}
+2026-04-20 10:00:01: Running health check...
+2026-04-20 10:00:01: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 10:00:03: API 告警已推送，标记文件已更新
+2026-04-20 10:00:03: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '997f2a53-a84c-9989-9b0d-56430e5a51cc'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '80056920-587d-9545-bb9f-c7d41eb78660'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '6c5be044-962e-9825-bd8f-563cb98eff11'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '8dc52807-fb24-9ce4-aa17-54bf892d9d67'}
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.79s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_093518_20260420_093519_749459.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.09s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_093919_20260420_093921_422127.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 2.46s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_100021_20260420_100024_540750.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.06s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_100024_20260420_100026_137270.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.15s  Context: 2 msgs, ~5,621 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_100026_20260420_100027_783633.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.93s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_103027_20260420_103035_240602.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '887bb4bf-13fd-94bc-8cc9-9fb57b6b7899'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '96e69f16-ba86-902f-b700-80285cd2ced0'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '813d15ad-fa92-9de8-a7ed-1f2ff05ae583'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '6818e4b6-d394-9f99-9212-6f16c597c94a'}
+2026-04-20 11:00:01: Running health check...
+2026-04-20 11:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 11:00:04: API 告警已推送，标记文件已更新
+2026-04-20 11:00:04: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '1a22349c-ce8b-92ae-a52b-c94b23a75ad2'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'd770cfe8-dfc8-9812-b628-eaa3e86cbbae'}
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.93s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_103035_20260420_103036_681730.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.20s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_103536_20260420_103538_426275.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.88s  Context: 2 msgs, ~5,663 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_dc1639948132_20260420_103838_20260420_103839_875783.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.24s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_103939_20260420_103941_688129.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.00s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_110041_20260420_110043_333002.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.24s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_110043_20260420_110045_090131.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.05s  Context: 2 msgs, ~5,621 tokens
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '63646c51-8eff-9ba0-971a-b197a3496c1d'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '5939b6f1-009c-982f-a4e8-ad4f9551b03b'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'd8fe774e-8e5e-902e-acab-0ec1afa58aa4'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '8f469603-73b8-962f-aaf7-a480d601a2ac'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'a3383682-dde4-9208-a7f4-f14b1c93942f'}
+2026-04-20 12:00:01: Running health check...
+2026-04-20 12:00:02: API connection issue! (HTTP 404)
+✗ API 返回错误 (errcode=-14): {'errcode': -14, 'errmsg': 'session timeout'}
+2026-04-20 12:00:03: API 告警已推送，标记文件已更新
+2026-04-20 12:00:03: Health check completed.
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'ef98df06-0a94-993b-8b8d-2ab5469bb3a8'}
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_e61f76eee686_20260420_110045_20260420_110046_665906.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.95s  Context: 2 msgs, ~5,651 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_ac10ed01ee18_20260420_113046_20260420_113050_758023.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 5.98s  Context: 2 msgs, ~5,639 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_096c3b4d25d1_20260420_113050_20260420_113057_277846.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 8.11s  Context: 2 msgs, ~5,658 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_aff1c58201e9_20260420_113557_20260420_113605_961164.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 2.04s  Context: 2 msgs, ~5,684 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_5a2800db67fd_20260420_114006_20260420_114008_587459.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 1.54s  Context: 2 msgs, ~5,609 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_93fb5baf0a4d_20260420_120008_20260420_120010_778849.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   💡 Your API key was rejected by the provider. Check:
+      • Is the key valid? Run: hermes setup
+      • Does your account have access to deepseek-chat?
+⚠️  API call failed (attempt 1/3): AuthenticationError [HTTP 401]
+   🔌 Provider: deepseek  Model: deepseek-chat
+   🌐 Endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1
+   📝 Error: HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+   📋 Details: {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}
+   ⏱️  Elapsed: 0.87s  Context: 2 msgs, ~5,665 tokens
+⚠️ Non-retryable error (HTTP 401) — trying fallback...
+🧾 Request debug dump written to: /home/xiaobai/.hermes/sessions/request_dump_cron_fb71c1e580b5_20260420_120010_20260420_120012_205731.json
+❌ Non-retryable error (HTTP 401): HTTP 401: Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error
+❌ Non-retryable client error (HTTP 401). Aborting.
+   🔌 Provider: deepseek  Model: deepseek-chat
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '48e2c81b-5a94-964a-a829-d5d15e9ac6fc'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'acc95837-bf85-9014-afb2-1a3308fabb36'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '25bf1497-9da3-91fc-99c7-46e46ac0df73'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'f089136f-f448-9968-8ecc-1f231a8a6303'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '3d4b34e6-31ea-9d3a-a1a2-0cc584705dd3'}
+ERROR root: Non-retryable client error: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '13c1c4ec-13c3-913d-95f6-f70f8f7d72af'}
+2026-04-21 17:00:01: Running health check...
+2026-04-21 17:00:01: API connection issue! (HTTP 404)
+错误：未找到微信账户配置
+2026-04-21 17:00:02: API 告警已推送，标记文件已更新
+2026-04-21 17:00:02: Health check completed.
+2026-04-21 18:00:01: Running health check...
+2026-04-21 18:00:02: API connection issue! (HTTP 404)
+错误：未找到微信账户配置
+2026-04-21 18:00:02: API 告警已推送，标记文件已更新
+2026-04-21 18:00:02: Health check completed.
+2026-04-21 19:00:01: Running health check...
+2026-04-21 19:00:02: API connection issue! (HTTP 404)
+错误：未找到微信账户配置
+2026-04-21 19:00:02: API 告警已推送，标记文件已更新
+2026-04-21 19:00:02: Health check completed.
+2026-04-21 20:00:01: Running health check...
+2026-04-21 20:00:02: API connection issue! (HTTP 404)
+2026-04-21 20:00:02: Health check completed.
+2026-04-21 21:00:01: Running health check...
+2026-04-21 21:00:02: API connection issue! (HTTP 404)
+2026-04-21 21:00:02: Health check completed.
+2026-04-21 22:00:01: Running health check...
+2026-04-21 22:00:02: API connection issue! (HTTP 404)
+2026-04-21 22:00:02: Health check completed.
+2026-04-21 23:00:01: Running health check...
+2026-04-21 23:00:07: API connection issue! (HTTP 404)
+2026-04-21 23:00:07: Health check completed.

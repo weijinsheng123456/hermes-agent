@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}任务管理 - Hermes{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0">
+    <h1 class="text-3xl font-bold text-white mb-6">任务管理</h1>
+    
+    <!-- 新建任务 -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+        <h2 class="text-xl font-semibold mb-4">创建新任务</h2>
+        <form hx-post="/api/task" hx-swap="outerHTML" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">任务描述</label>
+                <textarea name="prompt" rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="输入任务描述..."></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                    创建任务
+                </button>
+                <span class="htmx-indicator text-gray-400">处理中...</span>
+            </div>
+        </form>
+    </div>
+    
+    <!-- 任务列表 -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold mb-4">任务列表</h2>
+        <div class="space-y-3" id="task-list">
+            <div class="text-gray-400 text-sm">暂无任务</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hermes Web Console{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline; }
+        .htmx-request.htmx-indicator { display: inline; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-blue-400">🚀 Hermes</span>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">概览</a>
+                            <a href="/tasks" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">任务</a>
+                            <a href="/config" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">配置</a>
+                            <a href="/logs" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">日志</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="status-indicator" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        ● 运行中
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-8">
+        <div class="max-w-7xl mx-auto py-4 px-4 text-center text-gray-400 text-sm">
+            Hermes Web Console v1.0.0 | 系统状态：<span id="footer-status">正常</span>
+        </div>
+    </footer>
+
+    <script>
+        // 定期检查系统状态
+        setInterval(async () => {
+            try {
+                const resp = await fetch('/api/status');
+                const status = await resp.json();
+                const indicator = document.getElementById('status-indicator');
+                if (status.gateway_running) {
+                    indicator.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
+                    indicator.textContent = '● 运行中';
+                } else {
+                    indicator.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                    indicator.textContent = '● 已停止';
+                }
+            } catch (e) {
+                console.error('状态检查失败:', e);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

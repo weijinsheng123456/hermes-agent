@@ -367,6 +367,31 @@ def _guess_chat_type(message: Dict[str, Any], account_id: str) -> Tuple[str, str
     return "dm", str(message.get("from_user_id") or "")
 
 
+def _raise_for_ilink_business_error(resp: Optional[Dict[str, Any]], operation: str) -> None:
+    """Check iLink API response for business-level errors.
+
+    ``_api_post()`` only raises on HTTP errors (non-2xx).  iLink can return
+    HTTP 200 with a JSON body containing ``ret`` or ``errcode`` non-zero to
+    signal business-level failures like session expiry (-14), rate limiting
+    (-2), etc.  Call this after every iLink API call to surface those errors.
+    """
+    if not resp or not isinstance(resp, dict):
+        return
+    ret = resp.get("ret")
+    errcode = resp.get("errcode")
+    errmsg = resp.get("errmsg") or resp.get("msg") or "unknown error"
+    if ret is not None and ret != 0:
+        raise RuntimeError(f"iLink {operation} error: ret={ret} errcode={errcode} errmsg={errmsg}")
+    if errcode is not None and errcode != 0:
+        logger.debug(
+            "[Weixin] iLink %s non-zero errcode (ret=%s, errcode=%s, errmsg=%s)",
+            operation,
+            ret,
+            errcode,
+            errmsg,
+        )
+
+
 async def _api_post(
     session: "aiohttp.ClientSession",
     *,
@@ -1334,10 +1359,14 @@ class WeixinAdapter(BasePlatformAdapter):
                 if ret not in {0, None} or errcode not in {0, None}:
                     if (ret == SESSION_EXPIRED_ERRCODE or errcode == SESSION_EXPIRED_ERRCODE
                             or _is_stale_session_ret(ret, errcode, response.get("errmsg"))):
-                        logger.error("[%s] Session expired; pausing for 10 minutes", self.name)
-                        await asyncio.sleep(600)
-                        consecutive_failures = 0
-                        continue
+                        logger.error("[%s] Session expired; triggering reconnection", self.name)
+                        self._set_fatal_error(
+                            "weixin_session_expired",
+                            f"Weixin session expired: ret={ret} errcode={errcode} errmsg={response.get('errmsg', '')}",
+                            retryable=True,
+                        )
+                        await self._notify_fatal_error()
+                        break
                     consecutive_failures += 1
                     logger.warning(
                         "[%s] getUpdates failed ret=%s errcode=%s errmsg=%s (%d/%d)",
@@ -1366,9 +1395,15 @@ class WeixinAdapter(BasePlatformAdapter):
             except Exception as exc:
                 consecutive_failures += 1
                 logger.error("[%s] poll error (%d/%d): %s", self.name, consecutive_failures, MAX_CONSECUTIVE_FAILURES, exc)
-                await asyncio.sleep(BACKOFF_DELAY_SECONDS if consecutive_failures >= MAX_CONSECUTIVE_FAILURES else RETRY_DELAY_SECONDS)
                 if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
-                    consecutive_failures = 0
+                    self._set_fatal_error(
+                        "weixin_poll_unhealthy",
+                        f"Weixin poll failed repeatedly ({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): {exc}",
+                        retryable=True,
+                    )
+                    await self._notify_fatal_error()
+                    break
+                await asyncio.sleep(RETRY_DELAY_SECONDS)
 
     async def _process_message_safe(self, message: Dict[str, Any]) -> None:
         try:
@@ -1917,6 +1952,7 @@ class WeixinAdapter(BasePlatformAdapter):
             filesize=_aes_padded_size(rawsize),
             aeskey_hex=aes_key.hex(),
         )
+        _raise_for_ilink_business_error(upload_response, "getUploadUrl")
         upload_param = str(upload_response.get("upload_param") or "")
         upload_full_url = str(upload_response.get("upload_full_url") or "")
         ciphertext = _aes128_ecb_encrypt(plaintext, aes_key)
@@ -1958,7 +1994,7 @@ class WeixinAdapter(BasePlatformAdapter):
         last_message_id = None
         if caption:
             last_message_id = f"hermes-weixin-{uuid.uuid4().hex}"
-            await _send_message(
+            caption_resp = await _send_message(
                 self._send_session,
                 base_url=self._base_url,
                 token=self._token,
@@ -1967,9 +2003,10 @@ class WeixinAdapter(BasePlatformAdapter):
                 context_token=context_token,
                 client_id=last_message_id,
             )
+            _raise_for_ilink_business_error(caption_resp, "sendmessage(caption)")
 
         last_message_id = f"hermes-weixin-{uuid.uuid4().hex}"
-        await _api_post(
+        media_resp = await _api_post(
             self._send_session,
             base_url=self._base_url,
             endpoint=EP_SEND_MESSAGE,
@@ -1987,6 +2024,7 @@ class WeixinAdapter(BasePlatformAdapter):
             token=self._token,
             timeout_ms=API_TIMEOUT_MS,
         )
+        _raise_for_ilink_business_error(media_resp, "sendmessage(media)")
         return last_message_id
 
     def _outbound_media_builder(self, path: str, force_file_attachment: bool = False):

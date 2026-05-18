@@ -24,11 +24,14 @@ logger = logging.getLogger(__name__)
 import os
 import threading
 import time
+from pathlib import Path
 from concurrent.futures import (
     ThreadPoolExecutor,
     TimeoutError as FuturesTimeoutError,
 )
 from typing import Any, Dict, List, Optional
+
+from dataclasses import dataclass
 
 from toolsets import TOOLSETS
 
@@ -39,6 +42,116 @@ _RUNTIME_PROVIDER_CUSTOM = "custom"
 from tools import file_state
 from tools.terminal_tool import set_approval_callback as _set_subagent_approval_cb
 from utils import base_url_hostname, is_truthy_value
+import yaml
+
+
+# ---------------------------------------------------------------------------
+# Budget tracking for delegation tree resource control
+# ---------------------------------------------------------------------------
+@dataclass
+class BudgetTracker:
+    """Per-delegate_task budget tracker. Not thread-safe; use only on the
+    parent thread (budget check before submit + deduction after result)."""
+
+    max_tokens: int = 0  # 0 = unlimited
+    max_calls: int = 0
+    max_cost_usd: float = 0.0
+
+    used_tokens: int = 0
+    used_calls: int = 0
+    used_cost_usd: float = 0.0
+    exceeded: bool = False
+    exceeded_reason: str = ""
+
+    @classmethod
+    def from_dict(cls, d: dict | None) -> "BudgetTracker":
+        if not d:
+            return cls()  # unlimited
+        try:
+            return cls(
+                max_tokens=int(d.get("max_tokens", 0) or 0),
+                max_calls=int(d.get("max_calls", 0) or 0),
+                max_cost_usd=float(d.get("max_cost_usd", 0.0) or 0.0),
+            )
+        except (TypeError, ValueError):
+            return cls()  # fallback to unlimited on malformed input
+
+    def has_budget(self) -> bool:
+        """Check if any budget limit still has room.
+
+        Returns True if ALL configured limits are within bounds:
+        - max_tokens: used < max OR unset
+        - max_calls: calls < max OR unset
+        - max_cost_usd: cost < max OR unset
+
+        Returns False (out of budget) when ANY limit is exceeded (AND semantics).
+        """
+        if self.max_tokens == 0 and self.max_calls == 0 and self.max_cost_usd == 0.0:
+            return True  # unlimited
+        if self.max_tokens and self.used_tokens >= self.max_tokens:
+            return False
+        if self.max_calls and self.used_calls >= self.max_calls:
+            return False
+        if self.max_cost_usd and self.used_cost_usd >= self.max_cost_usd:
+            return False
+        return True
+
+    def deduct(self, tokens_in: int = 0, tokens_out: int = 0,
+               calls: int = 0, cost_usd: float = 0.0) -> None:
+        self.used_tokens += tokens_in + tokens_out
+        self.used_calls += calls
+        self.used_cost_usd += cost_usd
+
+    def check_and_deduct(self, tokens_in: int = 0, tokens_out: int = 0,
+                          calls: int = 0, cost_usd: float = 0.0) -> bool:
+        """Pre-check: returns True if there's room to run another child."""
+        import warnings
+        warnings.warn("check_and_deduct() is deprecated, use has_budget() + deduct() instead", DeprecationWarning, stacklevel=2)
+        if self.max_tokens and self.used_tokens + tokens_in + tokens_out >= self.max_tokens:
+            self.exceeded = True
+            self.exceeded_reason = (
+                f"Budget exceeded: tokens {self.used_tokens + tokens_in + tokens_out} > {self.max_tokens}"
+            )
+            return False
+        if self.max_calls and self.used_calls + calls >= self.max_calls:
+            self.exceeded = True
+            self.exceeded_reason = (
+                f"Budget exceeded: API calls {self.used_calls + calls} > {self.max_calls}"
+            )
+            return False
+        if self.max_cost_usd and self.used_cost_usd + cost_usd >= self.max_cost_usd:
+            self.exceeded = True
+            self.exceeded_reason = (
+                f"Budget exceeded: cost ${self.used_cost_usd + cost_usd:.4f} > ${self.max_cost_usd:.4f}"
+            )
+            return False
+        self.used_tokens += tokens_in + tokens_out
+        self.used_calls += calls
+        self.used_cost_usd += cost_usd
+        return True
+
+    def summary(self) -> dict:
+        return {
+            "max_tokens": self.max_tokens,
+            "max_calls": self.max_calls,
+            "max_cost_usd": round(self.max_cost_usd, 4),
+            "used_tokens": self.used_tokens,
+            "used_calls": self.used_calls,
+            "used_cost_usd": round(self.used_cost_usd, 4),
+            "exceeded": self.exceeded,
+            "exceeded_reason": self.exceeded_reason,
+        }
+
+    def exceeded_entry(self, task_index: int, goal: str) -> dict:
+        return {
+            "task_index": task_index,
+            "status": "budget_exceeded",
+            "summary": None,
+            "error": self.exceeded_reason,
+            "api_calls": 0,
+            "duration_seconds": 0,
+            "exit_reason": "budget_exceeded",
+        }
 
 
 # Tools that children must never have access to
@@ -364,11 +477,11 @@ def _get_max_concurrent_children() -> int:
     return _DEFAULT_MAX_CONCURRENT_CHILDREN
 
 
-def _get_child_timeout() -> float:
+def _get_child_timeout(role: str = "leaf") -> float:
     """Read delegation.child_timeout_seconds from config.
 
     Returns the number of seconds a single child agent is allowed to run
-    before being considered stuck.  Default: 600 s (10 minutes).
+    before being considered stuck.  Default: 90 s for leaf, 600 s for orchestrator.
     """
     cfg = _load_config()
     val = cfg.get("child_timeout_seconds")
@@ -388,7 +501,52 @@ def _get_child_timeout() -> float:
             return max(30.0, float(env_val))
         except (TypeError, ValueError):
             pass
-    return float(DEFAULT_CHILD_TIMEOUT)
+    return float(DEFAULT_CHILD_TIMEOUT if role == "orchestrator" else 90)
+
+
+def _summary_quality_failure(
+    summary: str,
+    min_results: Optional[int] = None,
+    no_tool_usage: bool = False,
+) -> Optional[str]:
+    if no_tool_usage:
+        return "no_tool_usage"
+    text = (summary or "").strip()
+    if not text:
+        return "empty summary"
+    lowered = text.lower()
+    for marker in ("no results found", "failed", "error"):
+        if marker in lowered:
+            return f"summary contains {marker!r}"
+    if min_results:
+        result_count = len([line for line in text.splitlines() if line.strip()])
+        if result_count < min_results:
+            return f"summary has {result_count} result(s), below min_results={min_results}"
+    return None
+
+
+def _conversation_used_tools(result: Dict[str, Any]) -> bool:
+    """Return True if the child conversation contains any assistant tool call."""
+    messages = result.get("messages") or []
+    if not isinstance(messages, list):
+        return False
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        if msg.get("role") != "assistant":
+            continue
+        if msg.get("tool_calls"):
+            return True
+    return False
+
+
+def _child_has_tools(child: Any) -> bool:
+    """Return True when the child agent was given at least one callable tool."""
+    tool_names = getattr(child, "valid_tool_names", None)
+    if tool_names:
+        return True
+    tools = getattr(child, "tools", None)
+    return bool(tools)
 
 
 def _get_max_spawn_depth() -> int:
@@ -566,6 +724,29 @@ def check_delegate_requirements() -> bool:
     return True
 
 
+def _load_profile(name: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Load a behavior profile from ~/.hermes/behavior_profiles/<name>.yaml.
+
+    Returns None if name is None or file doesn't exist.
+    Profiles inject strategic instructions, timeouts, and quality gates
+    into the child agent's system prompt.
+    """
+    if not name:
+        return None
+    # Sanitize: strip directory components to prevent path traversal
+    safe_name = Path(name).name
+    path = Path.home() / ".hermes" / "behavior_profiles" / f"{safe_name}.yaml"
+    if not path.exists():
+        logger.warning("Behavior profile '%s' not found at %s", name, path)
+        return None
+    try:
+        with open(path) as f:
+            return yaml.safe_load(f)
+    except Exception as exc:
+        logger.warning("Failed to load behavior profile '%s': %s", name, exc)
+        return None
+
+
 def _build_child_system_prompt(
     goal: str,
     context: Optional[str] = None,
@@ -574,6 +755,7 @@ def _build_child_system_prompt(
     role: str = "leaf",
     max_spawn_depth: int = 2,
     child_depth: int = 1,
+    profile_instructions: Optional[str] = None,
 ) -> str:
     """Build a focused system prompt for a child agent.
 
@@ -608,6 +790,8 @@ def _build_child_system_prompt(
         "Be thorough but concise -- your response is returned to the "
         "parent agent as a summary."
     )
+    if profile_instructions:
+        parts.append(f"\n## BEHAVIOR PROFILE\n{profile_instructions}")
     if role == "orchestrator":
         child_note = (
             "Your own children MUST be leaves (cannot delegate further) "
@@ -888,6 +1072,7 @@ def _build_child_agent(
     # 'leaf' (default) cannot; 'orchestrator' retains the delegation
     # toolset subject to depth/kill-switch bounds applied below.
     role: str = "leaf",
+    profile: Optional[str] = None,
 ):
     """
     Build a child AIAgent on the main thread (thread-safe construction).
@@ -968,6 +1153,16 @@ def _build_child_agent(
         child_toolsets.append("delegation")
 
     workspace_hint = _resolve_workspace_hint(parent_agent)
+    # Load behavior profile
+    profile_data = _load_profile(profile)
+    profile_instructions = profile_data.get("instructions") if profile_data else None
+    _profile_min_results = None
+    if profile_data:
+        try:
+            _profile_min_results = int(profile_data.get("quality", {}).get("min_results", 0))
+        except (TypeError, ValueError):
+            pass
+
     child_prompt = _build_child_system_prompt(
         goal,
         context,
@@ -975,6 +1170,7 @@ def _build_child_agent(
         role=effective_role,
         max_spawn_depth=max_spawn,
         child_depth=child_depth,
+        profile_instructions=profile_instructions,
     )
     # Extract parent's API key so subagents inherit auth (e.g. Nous Portal).
     parent_api_key = getattr(parent_agent, "api_key", None)
@@ -1170,6 +1366,10 @@ def _build_child_agent(
             child_progress_cb("subagent.spawn_requested", preview=goal)
         except Exception as exc:
             logger.debug("spawn_requested relay failed: %s", exc)
+
+    # Wire profile quality config to child for _run_single_child to use
+    if _profile_min_results:
+        child._profile_min_results = _profile_min_results
 
     return child
 
@@ -1488,7 +1688,7 @@ def _run_single_child(
 
         # Run child with a hard timeout to prevent indefinite blocking
         # when the child's API call or tool-level HTTP request hangs.
-        child_timeout = _get_child_timeout()
+        child_timeout = _get_child_timeout(role=getattr(child, '_delegate_role', 'leaf'))
         _timeout_executor = ThreadPoolExecutor(
             max_workers=1,
             # Install a non-interactive approval callback in the worker thread
@@ -1621,6 +1821,7 @@ def _run_single_child(
         completed = result.get("completed", False)
         interrupted = result.get("interrupted", False)
         api_calls = result.get("api_calls", 0)
+        no_tool_usage = _child_has_tools(child) and not _conversation_used_tools(result)
 
         if interrupted:
             status = "interrupted"
@@ -1631,6 +1832,61 @@ def _run_single_child(
             status = "completed"
         else:
             status = "failed"
+
+        # Quality gate: check if sub-agent actually produced useful results
+        quality_fail = _summary_quality_failure(
+            summary,
+            min_results=getattr(child, '_profile_min_results', None),
+            no_tool_usage=no_tool_usage,
+        )
+        if quality_fail and not interrupted:
+            logger.warning(
+                "Subagent %d quality gate failed: %s — retrying once",
+                task_index, quality_fail,
+            )
+            # Retry with fresh agent
+            retry_goal = (
+                f"Previous attempt returned: {summary[:200]}\n"
+                f"Quality issue: {quality_fail}\n\n"
+                f"Retry with a completely different approach. You have tools "
+                f"available and MUST call the relevant tool(s) before answering. "
+                f"Do not answer from memory or invent search results. "
+                f"Focus on producing concrete, tool-backed results this time."
+            )
+            # Kill old executor
+            try:
+                _timeout_executor.shutdown(wait=False)
+            except Exception:
+                pass
+            # Fresh executor for retry
+            _timeout_executor = ThreadPoolExecutor(
+                max_workers=1,
+                initializer=_set_subagent_approval_cb,
+                initargs=(_get_subagent_approval_callback(),),
+            )
+            _worker_thread_holder = {"t": None}
+            def _run_retry():
+                _worker_thread_holder["t"] = threading.current_thread()
+                return child.run_conversation(
+                    user_message=retry_goal,
+                    task_id=child_task_id + "_retry",
+                )
+            _retry_future = _timeout_executor.submit(_run_retry)
+            try:
+                result = _retry_future.result(timeout=child_timeout)
+                summary = result.get("final_response") or ""
+                if summary:
+                    quality_retry_fail = _summary_quality_failure(summary, task_index)
+                    if quality_retry_fail:
+                        logger.warning("Subagent %d retry produced low-quality output: %s", task_index, quality_retry_fail)
+                        status = "retry_failed"
+                    else:
+                        status = "completed"
+                        logger.info("Subagent %d retry succeeded", task_index)
+            except Exception:
+                result = {"final_response": "[Retry failed - subagent timed out or crashed]"}
+                status = "retry_failed"
+                logger.warning("Subagent %d retry also failed ❌", task_index)
 
         # Build tool trace from conversation messages (already in memory).
         # Uses tool_call_id to correctly pair parallel tool calls with results.
@@ -1924,6 +2180,8 @@ def delegate_task(
     acp_command: Optional[str] = None,
     acp_args: Optional[List[str]] = None,
     role: Optional[str] = None,
+    profile: Optional[str] = None,
+    budget: Optional[Dict[str, Any]] = None,
     parent_agent=None,
 ) -> str:
     """
@@ -1986,6 +2244,9 @@ def delegate_task(
             max_iterations, default_max_iter,
         )
     effective_max_iter = default_max_iter
+
+    # Parse budget if provided
+    _budget = BudgetTracker.from_dict(budget)
 
     # Resolve delegation credentials (provider:model pair).
     # When delegation.provider is configured, this resolves the full credential
@@ -2080,6 +2341,7 @@ def delegate_task(
                     else (acp_args if acp_args is not None else creds.get("args"))
                 ),
                 role=effective_role,
+                profile=profile,
             )
             # Override with correct parent tool names (before child construction mutated global)
             child._delegate_saved_tool_names = _parent_tool_names
@@ -2089,9 +2351,21 @@ def delegate_task(
         _model_tools._last_resolved_tool_names = _parent_tool_names
 
     if n_tasks == 1:
-        # Single task -- run directly (no thread pool overhead)
-        _i, _t, child = children[0]
-        result = _run_single_child(0, _t["goal"], child, parent_agent)
+        # Single task -- budget check before running
+        if not _budget.has_budget():
+            result = _budget.exceeded_entry(0, children[0][1]["goal"])
+            logger.warning(
+                "Single-task delegation blocked by budget: %s", _budget.exceeded_reason
+            )
+        else:
+            _i, _t, child = children[0]
+            result = _run_single_child(0, _t["goal"], child, parent_agent)
+            _budget.deduct(
+                tokens_in=result.get("tokens", {}).get("input", 0),
+                tokens_out=result.get("tokens", {}).get("output", 0),
+                calls=result.get("api_calls", 0),
+                cost_usd=result.get("_child_cost_usd", 0.0),
+            )
         results.append(result)
     else:
         # Batch -- run in parallel with per-task progress lines
@@ -2100,15 +2374,23 @@ def delegate_task(
 
         with ThreadPoolExecutor(max_workers=max_children) as executor:
             futures = {}
+            _budget_exceeded_tasks = []
             for i, t, child in children:
-                future = executor.submit(
-                    _run_single_child,
-                    task_index=i,
-                    goal=t["goal"],
-                    child=child,
-                    parent_agent=parent_agent,
-                )
-                futures[future] = i
+                if _budget.has_budget():
+                    future = executor.submit(
+                        _run_single_child,
+                        task_index=i,
+                        goal=t["goal"],
+                        child=child,
+                        parent_agent=parent_agent,
+                    )
+                    futures[future] = i
+                else:
+                    _budget_exceeded_tasks.append(i)
+                    logger.warning(
+                        "Task %d skipped: budget exhausted (%s)",
+                        i, _budget.exceeded_reason,
+                    )
 
             # Poll futures with interrupt checking.  as_completed() blocks
             # until ALL futures finish — if a child agent gets stuck,
@@ -2182,6 +2464,15 @@ def delegate_task(
                     results.append(entry)
                     completed_count += 1
 
+                    # Deduct budget for completed child
+                    if entry.get("status") not in ("budget_exceeded",):
+                        _budget.deduct(
+                            tokens_in=entry.get("tokens", {}).get("input", 0),
+                            tokens_out=entry.get("tokens", {}).get("output", 0),
+                            calls=entry.get("api_calls", 0),
+                            cost_usd=entry.get("_child_cost_usd", 0.0),
+                        )
+
                     # Print per-task completion line above the spinner
                     idx = entry["task_index"]
                     label = (
@@ -2208,6 +2499,15 @@ def delegate_task(
                             )
                         except Exception as e:
                             logger.debug("Spinner update_text failed: %s", e)
+
+        # Append budget-exceeded task entries (were never submitted)
+        for _idx in _budget_exceeded_tasks:
+            _label = task_labels[_idx] if _idx < len(task_labels) else f"Task {_idx}"
+            _entry = _budget.exceeded_entry(_idx, _label)
+            _entry["_child_role"] = getattr(
+                _child_by_index.get(_idx), "_delegate_role", None
+            )
+            results.append(_entry)
 
         # Sort by task_index so results match input order
         results.sort(key=lambda r: r["task_index"])
@@ -2304,6 +2604,7 @@ def delegate_task(
         {
             "results": results,
             "total_duration_seconds": total_duration,
+            "budget": _budget.summary(),
         },
         ensure_ascii=False,
     )
@@ -2736,6 +3037,10 @@ DELEGATE_TASK_SCHEMA = {
                             "enum": ["leaf", "orchestrator"],
                             "description": "Per-task role override. See top-level 'role' for semantics.",
                         },
+                        "profile": {
+                            "type": "string",
+                            "description": "Per-task behavior profile override. See top-level 'profile' for semantics.",
+                        },
                     },
                     "required": ["goal"],
                 },
@@ -2748,6 +3053,19 @@ DELEGATE_TASK_SCHEMA = {
                 "type": "string",
                 "enum": ["leaf", "orchestrator"],
                 "description": "(rebuilt at get_definitions() time)",
+            },
+            "profile": {
+                "type": "string",
+                "description": "Optional behavior profile name (e.g. 'web-researcher') that injects task-specific strategies. Available: web-researcher (API-first search, auto-degrade, 30s timeout). Omit for default behavior.",
+            },
+            "budget": {
+                "type": "object",
+                "properties": {
+                    "max_tokens": {"type": "integer", "description": "Maximum total tokens (input + output) for this delegation"},
+                    "max_calls": {"type": "integer", "description": "Maximum number of tool-calling iterations"},
+                    "max_cost_usd": {"type": "number", "description": "Maximum cost in USD"}
+                },
+                "description": "Optional budget constraints for the subagent. Omit for unlimited.",
             },
             "acp_command": {
                 "type": "string",
@@ -2791,6 +3109,8 @@ registry.register(
         tasks=args.get("tasks"),
         max_iterations=args.get("max_iterations"),
         acp_command=args.get("acp_command"),
+        profile=args.get("profile"),
+        budget=args.get("budget"),
         acp_args=args.get("acp_args"),
         role=args.get("role"),
         parent_agent=kw.get("parent_agent"),

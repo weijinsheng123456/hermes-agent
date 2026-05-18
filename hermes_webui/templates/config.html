@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}配置管理 - Hermes{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-0">
+    <h1 class="text-3xl font-bold text-white mb-6">配置管理</h1>
+    
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold mb-4">config.yaml</h2>
+        <form hx-post="/api/config" hx-swap="outerHTML" class="space-y-4">
+            <textarea name="content" rows="20" class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ config_content }}</textarea>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                保存配置
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

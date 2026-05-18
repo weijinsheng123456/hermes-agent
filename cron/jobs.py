@@ -327,7 +327,7 @@ def _compute_grace_seconds(schedule: dict) -> int:
     while frequent jobs (every 5-10 min) still fast-forward quickly.
     """
     MIN_GRACE = 120
-    MAX_GRACE = 7200  # 2 hours
+    MAX_GRACE = 14400  # 4 hours (was 2h; increased 2026-05-17 to reduce skips during Gateway idle windows)
 
     kind = schedule.get("kind")
 
