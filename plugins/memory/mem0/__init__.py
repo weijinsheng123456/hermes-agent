@@ -495,21 +495,42 @@ class Mem0MemoryProvider(MemoryProvider):
         client.add(messages, **self._write_filters())
 
     def _local_sync(self, user_content: str, assistant_content: str):
-        """Store a turn locally with LLM fact extraction (infer=True)."""
-        memory = self._get_local_memory()
-        messages = [
-            {"role": "user", "content": user_content},
-            {"role": "assistant", "content": assistant_content},
-        ]
-        # Use infer=False to store raw conversation (no LLM extraction needed).
-        # LLM-based fact extraction is available via sync_turn with infer=True
-        # when a valid API key is configured, but for reliability we keep it off.
-        memory.add(
-            messages,
-            user_id=self._user_id,
-            agent_id=self._agent_id,
-            infer=False,
-        )
+        """Store a turn locally with LLM fact extraction (infer=True).
+        
+        Retries up to 3 times with exponential backoff when Qdrant lock
+        is contended by another process (cron deliveries, etc.).
+        """
+        _qdrant_lock_msg = "already accessed by another instance"
+        _max_retries = 3
+        _retry_delay = 2.0
+        _last_exc = None
+        for attempt in range(_max_retries):
+            try:
+                memory = self._get_local_memory()
+                messages = [
+                    {"role": "user", "content": user_content},
+                    {"role": "assistant", "content": assistant_content},
+                ]
+                memory.add(
+                    messages,
+                    user_id=self._user_id,
+                    agent_id=self._agent_id,
+                    infer=False,
+                )
+                return  # success
+            except Exception as e:
+                _last_exc = e
+                if _qdrant_lock_msg in str(e).lower() and attempt < _max_retries - 1:
+                    _wait = _retry_delay * (2 ** attempt)
+                    logger.warning(
+                        "Qdrant lock contended, retrying in %.1fs (attempt %d/%d)",
+                        _wait, attempt + 1, _max_retries,
+                    )
+                    time.sleep(_wait)
+                    continue
+                raise
+        # If we get here, all retries failed — re-raise the last exception
+        raise _last_exc  # type: ignore[misc]
 
     # -- Tools ----------------------------------------------------------------
 

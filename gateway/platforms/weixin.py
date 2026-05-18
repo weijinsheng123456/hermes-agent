@@ -1213,6 +1213,14 @@ class WeixinAdapter(BasePlatformAdapter):
         hermes_home = str(get_hermes_home())
         self._hermes_home = hermes_home
         self._token_store = ContextTokenStore(hermes_home)
+
+        # Per-message rate limiting: minimum gap between consecutive sends.
+        # Prevents iLink from rate-limiting or disconnecting due to burst traffic.
+        self._last_send_time = 0.0
+        self._min_send_interval = float(
+            extra.get("send_interval_seconds") or os.getenv("WEIXIN_SEND_INTERVAL_SECONDS", "12.0")
+        )
+        self._rate_lock = asyncio.Lock()
         self._typing_cache = TypingTicketCache()
         self._poll_session: Optional[aiohttp.ClientSession] = None
         self._send_session: Optional[aiohttp.ClientSession] = None
@@ -1266,6 +1274,27 @@ class WeixinAdapter(BasePlatformAdapter):
         if isinstance(value, (list, tuple, set)):
             return [str(item).strip() for item in value if str(item).strip()]
         return [str(value).strip()] if str(value).strip() else []
+
+    async def _rate_limit_send(self) -> None:
+        """Enforce minimum interval between consecutive sends.
+
+        Prevents burst traffic from triggering iLink server-side rate limiting
+        or connection teardown. Uses an asyncio lock so concurrent senders
+        (cron + gateway) don't race.
+        """
+        if self._min_send_interval <= 0:
+            return
+        async with self._rate_lock:
+            now = asyncio.get_running_loop().time()
+            elapsed = now - self._last_send_time
+            if elapsed < self._min_send_interval:
+                wait = self._min_send_interval - elapsed
+                logger.debug(
+                    "[%s] rate-limiting: waited %.1fs (last send %.1fs ago, min interval %.1fs)",
+                    self.name, wait, elapsed, self._min_send_interval,
+                )
+                await asyncio.sleep(wait)
+            self._last_send_time = asyncio.get_running_loop().time()
 
     async def connect(self) -> bool:
         if not check_weixin_requirements():
@@ -1321,15 +1350,23 @@ class WeixinAdapter(BasePlatformAdapter):
         if self._poll_task and not self._poll_task.done():
             self._poll_task.cancel()
             try:
-                await self._poll_task
+                await asyncio.wait_for(self._poll_task, timeout=10)
             except asyncio.CancelledError:
                 pass
+            except asyncio.TimeoutError:
+                logger.warning("[%s] poll_task cancellation timed out", self.name)
         self._poll_task = None
         if self._poll_session and not self._poll_session.closed:
-            await self._poll_session.close()
+            try:
+                await asyncio.wait_for(self._poll_session.close(), timeout=5)
+            except (asyncio.TimeoutError, OSError) as exc:
+                logger.warning("[%s] poll_session close timed out or failed: %s", self.name, exc)
         self._poll_session = None
         if self._send_session and not self._send_session.closed:
-            await self._send_session.close()
+            try:
+                await asyncio.wait_for(self._send_session.close(), timeout=5)
+            except (asyncio.TimeoutError, OSError) as exc:
+                logger.warning("[%s] send_session close timed out or failed: %s", self.name, exc)
         self._send_session = None
         self._release_platform_lock()
         self._mark_disconnected()
@@ -1377,9 +1414,19 @@ class WeixinAdapter(BasePlatformAdapter):
                         consecutive_failures,
                         MAX_CONSECUTIVE_FAILURES,
                     )
-                    await asyncio.sleep(BACKOFF_DELAY_SECONDS if consecutive_failures >= MAX_CONSECUTIVE_FAILURES else RETRY_DELAY_SECONDS)
                     if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
-                        consecutive_failures = 0
+                        self._set_fatal_error(
+                            "weixin_poll_unhealthy",
+                            (
+                                f"Weixin getUpdates failed repeatedly "
+                                f"({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): "
+                                f"ret={ret} errcode={errcode} errmsg={response.get('errmsg', '')}"
+                            ),
+                            retryable=True,
+                        )
+                        await self._notify_fatal_error()
+                        break
+                    await asyncio.sleep(RETRY_DELAY_SECONDS)
                     continue
 
                 consecutive_failures = 0
@@ -1420,7 +1467,7 @@ class WeixinAdapter(BasePlatformAdapter):
             return
 
         message_id = str(message.get("message_id") or "").strip()
-        if message_id and self._dedup.is_duplicate(message_id):
+        if message_id and self._dedup.check_only(message_id):
             return
 
         # Secondary content-fingerprint dedup for text messages
@@ -1428,7 +1475,7 @@ class WeixinAdapter(BasePlatformAdapter):
         text = _extract_text(item_list)
         if text:
             content_key = f"content:{sender_id}:{hashlib.md5(text.encode()).hexdigest()}"
-            if self._dedup.is_duplicate(content_key):
+            if self._dedup.check_only(content_key):
                 logger.debug("[%s] Content-dedup: skipping duplicate message from %s", self.name, sender_id)
                 return
 
@@ -1477,6 +1524,12 @@ class WeixinAdapter(BasePlatformAdapter):
         )
         logger.info("[%s] inbound from=%s type=%s media=%d", self.name, _safe_id(sender_id), source.chat_type, len(media_paths))
         await self.handle_message(event)
+        # Mark as seen only after successful processing — prevents message
+        # loss when handle_message() throws (e.g. agent timeout).
+        if message_id:
+            self._dedup.mark_seen(message_id)
+        if text:
+            self._dedup.mark_seen(f"content:{sender_id}:{hashlib.md5(text.encode()).hexdigest()}")
 
     def _is_dm_allowed(self, sender_id: str) -> bool:
         if self._dm_policy == "disabled":
@@ -1669,7 +1722,7 @@ class WeixinAdapter(BasePlatformAdapter):
                             )
                             if attempt >= self._send_chunk_retries:
                                 break
-                            wait = self._send_chunk_retry_delay_seconds * 3  # 3x backoff for rate limit
+                            wait = 3 ** attempt  # exponential: 1, 3, 9, 27, 81s
                             logger.warning(
                                 "[%s] rate limited for %s; backing off %.1fs before retry",
                                 self.name, _safe_id(chat_id), wait,
@@ -1709,6 +1762,44 @@ class WeixinAdapter(BasePlatformAdapter):
     ) -> SendResult:
         if not self._send_session or not self._token:
             return SendResult(success=False, error="Not connected")
+        # Retry send at the method level for rate-limit errors.
+        # Each internal _send_text_chunk already retries 4x with exponential
+        # backoff; this outer loop catches cases where multiple cron deliveries
+        # fire concurrently and exhaust the per-chunk retries together.
+        _send_retries = 3
+        _send_retry_delay = 10.0
+        for _send_attempt in range(_send_retries + 1):
+            try:
+                return await self._send_once(chat_id, content, reply_to, metadata)
+            except RuntimeError as _e:
+                _emsg = str(_e)
+                if "rate limited" not in _emsg.lower():
+                    raise
+                if _send_attempt >= _send_retries:
+                    logger.error(
+                        "[%s] send rate limited after %d retries to %s: %s",
+                        self.name, _send_retries, _safe_id(chat_id), _emsg,
+                    )
+                    return SendResult(success=False, error=_emsg)
+                _wait = _send_retry_delay * (2 ** _send_attempt)
+                logger.warning(
+                    "[%s] send rate limited (attempt %d/%d), backing off %.0fs: %s",
+                    self.name, _send_attempt + 1, _send_retries, _wait, _emsg,
+                )
+                await asyncio.sleep(_wait)
+                continue
+        return SendResult(success=False, error="send failed after retries")
+
+    async def _send_once(
+        self,
+        chat_id: str,
+        content: str,
+        reply_to: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> SendResult:
+        if not self._send_session or not self._token:
+            return SendResult(success=False, error="Not connected")
+        await self._rate_limit_send()
         context_token = self._token_store.get(self._account_id, chat_id)
         last_message_id: Optional[str] = None
 
@@ -1961,6 +2052,7 @@ class WeixinAdapter(BasePlatformAdapter):
         # from upload_param.  Both paths use POST — the old PUT for
         # upload_full_url caused 404s on the WeChat CDN.
         if upload_full_url:
+            _assert_weixin_cdn_url(upload_full_url)
             upload_url = upload_full_url
         elif upload_param:
             upload_url = _cdn_upload_url(self._cdn_base_url, upload_param, filekey)
@@ -2182,26 +2274,30 @@ async def send_weixin_direct(
         adapter._cdn_base_url = cdn_base_url
         adapter._token_store = token_store
 
-        last_result: Optional[SendResult] = None
-        cleaned = adapter.format_message(message)
-        if cleaned:
-            last_result = await adapter.send(chat_id, cleaned)
-            if not last_result.success:
-                return {"error": f"Weixin send failed: {last_result.error}"}
+        try:
+            last_result: Optional[SendResult] = None
+            cleaned = adapter.format_message(message)
+            if cleaned:
+                last_result = await adapter.send(chat_id, cleaned)
+                if not last_result.success:
+                    return {"error": f"Weixin send failed: {last_result.error}"}
 
-        for media_path, _is_voice in media_files or []:
-            ext = Path(media_path).suffix.lower()
-            if ext in {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"}:
-                last_result = await adapter.send_image_file(chat_id, media_path)
-            else:
-                last_result = await adapter.send_document(chat_id, media_path)
-            if not last_result.success:
-                return {"error": f"Weixin media send failed: {last_result.error}"}
+            for media_path, _is_voice in media_files or []:
+                ext = Path(media_path).suffix.lower()
+                if ext in {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"}:
+                    last_result = await adapter.send_image_file(chat_id, media_path)
+                else:
+                    last_result = await adapter.send_document(chat_id, media_path)
+                if not last_result.success:
+                    return {"error": f"Weixin media send failed: {last_result.error}"}
 
-        return {
-            "success": True,
-            "platform": "weixin",
-            "chat_id": chat_id,
-            "message_id": last_result.message_id if last_result else None,
-            "context_token_used": bool(context_token),
-        }
+            return {
+                "success": True,
+                "platform": "weixin",
+                "chat_id": chat_id,
+                "message_id": last_result.message_id if last_result else None,
+                "context_token_used": bool(context_token),
+            }
+        finally:
+            if asyncio.iscoroutinefunction(getattr(adapter, 'disconnect', None)):
+                await adapter.disconnect()
