@@ -499,9 +499,11 @@ def cronjob(
             updated = trigger_job(job_id)
             if not updated:
                 return json.dumps({"success": False, "error": "Job not found"}, indent=2)
-            # Execute immediately instead of waiting for next scheduler tick.
+            # Use `updated` from trigger_job directly — it IS the resolved job.
+            # Avoids a redundant resolve_job_ref call and a race-condition window
+            # where the job could be deleted between trigger_job and re-fetch.
+            job = updated
             try:
-                job = resolve_job_ref(job_id)
                 if job and job.get("id"):
                     from cron.jobs import advance_next_run
                     from cron.scheduler import run_job as _do_run

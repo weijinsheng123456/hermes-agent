@@ -41,6 +41,10 @@ logger = logging.getLogger(__name__)
 _BREAKER_THRESHOLD = 5
 _BREAKER_COOLDOWN_SECS = 120
 
+# Module-level singleton for local mem0 (cross-instance sharing)
+_shared_local_memory = None
+_shared_local_lock = threading.Lock()
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -214,14 +218,16 @@ class Mem0MemoryProvider(MemoryProvider):
                 raise RuntimeError("mem0 package not installed. Run: pip install mem0ai")
 
     def _get_local_memory(self):
-        """Lazy-init local mem0 backend."""
-        if self._local_memory is not None:
-            return self._local_memory
-        with self._local_lock:
-            if self._local_memory is not None:
-                return self._local_memory
-            self._local_memory = self._build_local_memory()
-            return self._local_memory
+        """Lazy-init local mem0 backend (process-level singleton)."""
+        global _shared_local_memory
+        if _shared_local_memory is not None:
+            return _shared_local_memory
+        with _shared_local_lock:
+            if _shared_local_memory is not None:
+                return _shared_local_memory
+            _shared_local_memory = self._build_local_memory()
+            self._local_memory = _shared_local_memory  # keep instance ref too
+            return _shared_local_memory
 
     @staticmethod
     def _clean_qdrant_lock(qdrant_path: str) -> None:
@@ -689,12 +695,14 @@ class Mem0MemoryProvider(MemoryProvider):
         Note: Qdrant's .lock file ('tmp lock file') is a Rust-level marker,
         NOT an OS file lock. Qdrant does not remove it on shutdown — neither
         graceful nor abrupt. The startup cleanup (_clean_qdrant_lock) handles
-        stale markers. This method exists to close HTTP/SQLite connections
-        and release Python resources cleanly.
+        stale markers. This method closes the shared singleton on teardown.
         """
+        global _shared_local_memory
         local = None
-        with self._local_lock:
-            local = self._local_memory
+        with _shared_local_lock:
+            if _shared_local_memory is not None:
+                local = _shared_local_memory
+                _shared_local_memory = None
             self._local_memory = None
         if local is None:
             return
