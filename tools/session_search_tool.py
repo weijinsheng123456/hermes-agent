@@ -281,6 +281,9 @@ def _discover(
     limit: int,
     sort: Optional[str],
     current_session_id: str = None,
+    date_from: str = None,
+    date_to: str = None,
+    source: str = None,
 ) -> str:
     """Discovery shape: FTS5 + anchored window + bookends per hit. Single call."""
     role_list = role_filter if role_filter else ["user", "assistant"]
@@ -307,6 +310,31 @@ def _discover(
             "count": 0,
             "message": "No matching sessions found.",
         }, ensure_ascii=False)
+
+    # 🔧 Filter by date range and source (post-query filtering)
+    if date_from or date_to or source:
+        filtered = []
+        for r in raw_results:
+            sid = r.get("session_id", "")
+            # Source filter
+            if source:
+                source_lower = source.strip().lower()
+                if source_lower not in (r.get("source") or "").lower():
+                    continue
+            # Date filter — compare ISO timestamps lexicographically
+            ts = r.get("session_started") or ""
+            if date_from and ts < date_from:
+                continue
+            if date_to and ts > date_to:
+                continue
+            filtered.append(r)
+        raw_results = filtered
+        if not raw_results:
+            return json.dumps({
+                "success": True, "mode": "discover", "query": query,
+                "results": [], "count": 0,
+                "message": "No matching sessions (filtered by date/source).",
+            }, ensure_ascii=False)
 
     current_lineage_root = _resolve_to_parent(db, current_session_id) if current_session_id else None
 
@@ -387,6 +415,10 @@ def session_search(
     window: int = 5,
     # Discovery shape
     sort: str = None,
+    # 🔧 filters
+    date_from: str = None,
+    date_to: str = None,
+    source: str = None,
 ) -> str:
     """Single-shape tool. Mode inferred from which args are set.
 
@@ -447,6 +479,9 @@ def session_search(
         limit=limit,
         sort=sort_norm,
         current_session_id=current_session_id,
+        date_from=date_from,
+        date_to=date_to,
+        source=source,
     )
 
 
@@ -573,6 +608,28 @@ SESSION_SEARCH_SCHEMA = {
                     "behaviour) or 'tool' to search tool output only."
                 ),
             },
+            "date_from": {
+                "type": "string",
+                "description": (
+                    "Optional. ISO date filter (e.g. '2026-05-01' or '2026-05-01T00:00:00'). "
+                    "Only include sessions started on or after this date. Discovery shape only."
+                ),
+            },
+            "date_to": {
+                "type": "string",
+                "description": (
+                    "Optional. ISO date filter. Only include sessions started on or before "
+                    "this date. Discovery shape only."
+                ),
+            },
+            "source": {
+                "type": "string",
+                "description": (
+                    "Optional. Filter by session source platform. Examples: 'weixin', "
+                    "'cli', 'telegram', 'cron'. Case-insensitive partial match. "
+                    "Discovery shape only."
+                ),
+            },
         },
         "required": [],
     },
@@ -594,6 +651,9 @@ registry.register(
         around_message_id=args.get("around_message_id"),
         window=args.get("window", 5),
         sort=args.get("sort"),
+        date_from=args.get("date_from"),
+        date_to=args.get("date_to"),
+        source=args.get("source"),
         db=kw.get("db"),
         current_session_id=kw.get("current_session_id"),
     ),

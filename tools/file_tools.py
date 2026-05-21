@@ -1099,6 +1099,205 @@ PATCH_SCHEMA = {
     },
 }
 
+FILE_DIFF_SCHEMA = {
+    "name": "file_diff",
+    "description": (
+        "Compare two files and show the differences in unified diff format. "
+        "Uses Python's difflib. Useful for code review, verifying changes, "
+        "or comparing file versions. "
+        "Returns a colored unified diff with line numbers."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "path_a": {
+                "type": "string",
+                "description": "REQUIRED. First file path to compare (the 'old' version).",
+            },
+            "path_b": {
+                "type": "string",
+                "description": "REQUIRED. Second file path to compare (the 'new' version).",
+            },
+            "context_lines": {
+                "type": "integer",
+                "description": "Number of context lines around each diff hunk (default: 3).",
+                "default": 3,
+            },
+        },
+        "required": ["path_a", "path_b"],
+    },
+}
+
+
+def file_diff_tool(path_a: str, path_b: str, context_lines: int = 3, task_id: str = "default") -> str:
+    """Compare two files and return a unified diff."""
+    import difflib
+
+    try:
+        resolved_a = str(_resolve_path(path_a, task_id))
+        resolved_b = str(_resolve_path(path_b, task_id))
+    except Exception as e:
+        return tool_error(f"Path resolution failed: {e}")
+
+    try:
+        with open(resolved_a, encoding="utf-8", errors="replace") as f:
+            lines_a = f.readlines()
+        with open(resolved_b, encoding="utf-8", errors="replace") as f:
+            lines_b = f.readlines()
+    except FileNotFoundError as e:
+        return tool_error(f"File not found: {e.filename}")
+    except Exception as e:
+        return tool_error(f"Read failed: {e}")
+
+    diff = difflib.unified_diff(
+        lines_a, lines_b,
+        fromfile=path_a, tofile=path_b,
+        n=context_lines,
+        lineterm="",
+    )
+    diff_text = "\n".join(diff)
+
+    if not diff_text.strip():
+        return "✅ 文件完全相同，没有差异。"
+
+    # Show diff stats
+    added = sum(1 for line in diff_text.splitlines() if line.startswith("+") and not line.startswith("+++"))
+    removed = sum(1 for line in diff_text.splitlines() if line.startswith("-") and not line.startswith("---"))
+    stats = f"差异: +{added}/-{removed} 行\n\n"
+    return stats + "```diff\n" + diff_text + "\n```"
+
+
+def _handle_file_diff(args, **kw):
+    tid = kw.get("task_id") or "default"
+    return file_diff_tool(
+        path_a=args.get("path_a", ""),
+        path_b=args.get("path_b", ""),
+        context_lines=args.get("context_lines", 3),
+        task_id=tid,
+    )
+
+
+BATCH_REPLACE_SCHEMA = {
+    "name": "batch_replace",
+    "description": (
+        "Search and replace text across multiple files matching a glob pattern. "
+        "Uses ripgrep to find matches, then applies the replacement to each file. "
+        "Safer than sed -i: works with file paths, creates no temp files, "
+        "returns a summary of changes made."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "pattern": {
+                "type": "string",
+                "description": "REQUIRED. Glob pattern to find files (e.g., '*.py', 'scripts/*.sh', 'content/**/*.md').",
+            },
+            "old_string": {
+                "type": "string",
+                "description": "REQUIRED. Text to search for (plain text, not regex).",
+            },
+            "new_string": {
+                "type": "string",
+                "description": "REQUIRED. Replacement text.",
+            },
+            "path": {
+                "type": "string",
+                "description": "Root directory to search in (default: current working directory).",
+                "default": ".",
+            },
+            "dry_run": {
+                "type": "boolean",
+                "description": "If true, only show what would be changed without applying (default: false).",
+                "default": False,
+            },
+        },
+        "required": ["pattern", "old_string", "new_string"],
+    },
+}
+
+
+def batch_replace_tool(pattern: str, old_string: str, new_string: str,
+                        path: str = ".", dry_run: bool = False,
+                        task_id: str = "default") -> str:
+    """Search and replace text across multiple files matching a glob pattern."""
+    import subprocess
+    import json
+
+    _get_file_ops(task_id)  # ensure cache
+
+    try:
+        resolved_path = str(_resolve_path(path, task_id))
+    except Exception as e:
+        return tool_error(f"Path resolution failed: {e}")
+
+    # Use ripgrep to find files with matches
+    rg_cmd = ["rg", "-l", "--fixed-strings", old_string, "--glob", pattern, resolved_path]
+    try:
+        rg_result = subprocess.run(rg_cmd, capture_output=True, text=True, timeout=15)
+    except subprocess.TimeoutExpired:
+        return tool_error("rg search timed out (15s)")
+    except FileNotFoundError:
+        return tool_error("ripgrep (rg) not found. Install with: sudo apt install ripgrep")
+
+    if rg_result.returncode not in (0, 1):
+        return tool_error(f"rg failed: {rg_result.stderr[:200]}")
+
+    matched_files = [f.strip() for f in rg_result.stdout.strip().split("\n") if f.strip()]
+    if not matched_files:
+        return "没有找到匹配的文件。"
+
+    if len(matched_files) > 50:
+        return tool_error(f"匹配了 {len(matched_files)} 个文件（上限50）。请缩小 glob 范围。")
+
+    results = []
+    changed_count = 0
+    total_replacements = 0
+
+    for filepath in matched_files:
+        try:
+            with open(filepath, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+        except Exception as e:
+            results.append(f"❌ {filepath}: 读取失败 - {e}")
+            continue
+
+        count = content.count(old_string)
+        if count == 0:
+            continue
+
+        if not dry_run:
+            new_content = content.replace(old_string, new_string)
+            try:
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(new_content)
+                changed_count += 1
+                total_replacements += count
+                results.append(f"📝 {filepath}: 替换 {count} 处")
+            except Exception as e:
+                results.append(f"❌ {filepath}: 写入失败 - {e}")
+        else:
+            results.append(f"🔍 {filepath}: 将替换 {count} 处")
+
+    if dry_run:
+        header = f"🟡 预览模式: {len(matched_files)} 个文件匹配\n"
+    else:
+        header = f"🟢 完成: 修改 {changed_count}/{len(matched_files)} 个文件，共 {total_replacements} 处替换\n"
+
+    return header + "\n".join(results)
+
+
+def _handle_batch_replace(args, **kw):
+    tid = kw.get("task_id") or "default"
+    return batch_replace_tool(
+        pattern=args.get("pattern", ""),
+        old_string=args.get("old_string", ""),
+        new_string=args.get("new_string", ""),
+        path=args.get("path", "."),
+        dry_run=args.get("dry_run", False),
+        task_id=tid,
+    )
+
+
 SEARCH_FILES_SCHEMA = {
     "name": "search_files",
     "description": "Search file contents or find files by name. Use this instead of grep/rg/find/ls in terminal. Ripgrep-backed, faster than shell equivalents.\n\nContent search (target='content'): Regex search inside files. Output modes: full matches with line numbers, file paths only, or match counts.\n\nFile search (target='files'): Find files by glob pattern (e.g., '*.py', '*config*'). Also use this instead of ls — results sorted by modification time.",
@@ -1170,3 +1369,5 @@ registry.register(name="read_file", toolset="file", schema=READ_FILE_SCHEMA, han
 registry.register(name="write_file", toolset="file", schema=WRITE_FILE_SCHEMA, handler=_handle_write_file, check_fn=_check_file_reqs, emoji="✍️", max_result_size_chars=100_000)
 registry.register(name="patch", toolset="file", schema=PATCH_SCHEMA, handler=_handle_patch, check_fn=_check_file_reqs, emoji="🔧", max_result_size_chars=100_000)
 registry.register(name="search_files", toolset="file", schema=SEARCH_FILES_SCHEMA, handler=_handle_search_files, check_fn=_check_file_reqs, emoji="🔎", max_result_size_chars=100_000)
+registry.register(name="file_diff", toolset="file", schema=FILE_DIFF_SCHEMA, handler=_handle_file_diff, check_fn=_check_file_reqs, emoji="🔍", max_result_size_chars=50_000)
+registry.register(name="batch_replace", toolset="file", schema=BATCH_REPLACE_SCHEMA, handler=_handle_batch_replace, check_fn=_check_file_reqs, emoji="🔁", max_result_size_chars=50_000)
