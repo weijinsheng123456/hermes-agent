@@ -31,6 +31,7 @@ support.
 
 import json
 import logging
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Union
 
 # Sources that are excluded from session browsing/searching by default.
@@ -325,7 +326,14 @@ def _discover(
                 if source_lower not in (r.get("source") or "").lower():
                     continue
             # Date filter — compare ISO timestamps lexicographically
-            ts = r.get("session_started") or ""
+            ts_raw = r.get("session_started")
+            if ts_raw is None:
+                continue
+            # session_started is a float (Unix timestamp) from SQLite; convert to ISO
+            if isinstance(ts_raw, (int, float)):
+                ts = datetime.fromtimestamp(ts_raw, timezone.utc).strftime("%Y-%m-%d")
+            else:
+                ts = str(ts_raw)
             if date_from and ts < date_from:
                 continue
             if date_to and ts > date_to:
