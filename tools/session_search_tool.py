@@ -289,11 +289,14 @@ def _discover(
     role_list = role_filter if role_filter else ["user", "assistant"]
 
     try:
+        # When date/source filter is active, widen the FTS5 net so filtering
+        # doesn't miss older/other-platform sessions in the first 50 hits.
+        fts5_limit = 500 if (date_from or date_to or source) else 50
         raw_results = db.search_messages(
             query=query,
             role_filter=role_list,
             exclude_sources=list(_HIDDEN_SESSION_SOURCES),
-            limit=50,  # widen so dedup-by-lineage can find distinct sessions
+            limit=fts5_limit,  # widen when filtering so results don't vanish
             offset=0,
             sort=sort,
         )
