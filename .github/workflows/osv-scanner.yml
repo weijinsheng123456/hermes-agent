@@ -6,18 +6,14 @@ name: OSV-Scanner
 #
 # This is detection-only — OSV-Scanner does NOT open PRs or modify pins.
 # It reports known CVEs in currently-pinned dependency versions so we can
-# decide when and how to patch on our own schedule. Our pinning strategy
-# (full SHA / exact version) is preserved; only the notification signal
-# is added.
+# decide when and how to patch on our own schedule.
 #
-# Complements the existing supply-chain-audit.yml workflow (which scans
-# for malicious code patterns in PR diffs) by covering the orthogonal
-# "currently-pinned dep became known-vulnerable" case.
+# Uses google/osv-scanner-action Docker action directly (instead of the
+# reusable workflow) because actions/checkout@v6 inside the reusable workflow
+# consistently fails on fork environments. The self-contained job below
+# handles checkout with stable v4 before running the scanner.
 #
-# Uses Google's officially-recommended reusable workflow, pinned by SHA.
-# Findings land in the repo's Security tab (Code Scanning > OSV-Scanner).
-# fail-on-vuln is disabled so the job does not block merges on pre-existing
-# vulnerabilities in pinned deps that we may need to patch deliberately.
+# See: https://github.com/weijinsheng123456/hermes-agent/actions/runs/26401628447
 
 on:
   pull_request:
@@ -42,13 +38,10 @@ on:
       - 'ui-tui/package-lock.json'
       - 'website/package-lock.json'
   schedule:
-    # Weekly scan against main — catches CVEs published after merge for
-    # deps that haven't changed since.
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
 permissions:
-  # Required by the reusable workflow to upload SARIF to the Security tab.
   actions: read
   contents: read
   security-events: write
@@ -56,12 +49,33 @@ permissions:
 jobs:
   scan:
     name: Scan lockfiles
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
-    with:
-      # Scan explicit lockfiles rather than recursing, so we only look at
-      # the three sources of truth and skip vendored / test / worktree dirs.
-      scan-args: |-
-        --lockfile=uv.lock
-        --lockfile=ui-tui/package-lock.json
-        --lockfile=website/package-lock.json
-      fail-on-vuln: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
+        continue-on-error: true
+        with:
+          scan-args: |-
+            --output=results.json
+            --format=json
+            --lockfile=uv.lock
+            --lockfile=ui-tui/package-lock.json
+            --lockfile=website/package-lock.json
+
+      - name: Convert to SARIF
+        uses: google/osv-scanner-action/osv-reporter-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
+        with:
+          scan-args: |-
+            --output=results.sarif
+            --new=results.json
+            --gh-annotations=false
+            --fail-on-vuln=false
+
+      - name: Upload SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+          category: osv-scanner
